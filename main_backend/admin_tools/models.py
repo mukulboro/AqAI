@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
-
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password, **kwargs):
         if not email:
@@ -14,9 +13,11 @@ class CustomUserManager(BaseUserManager):
         user.save()
         return user
     
-    def create_super_user(self, email, password, **kwargs):
+    def create_superuser(self, email, password, **kwargs):
         kwargs.setdefault("is_staff", True)
-        kwargs.setdefault("is_user", False)
+        kwargs.setdefault("is_public", False)
+        kwargs.setdefault("is_municipal", False)
+        kwargs.setdefault("is_superuser", False)
         return self.create_user(email, password, **kwargs)
         
 
@@ -26,7 +27,10 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     middle_name = models.CharField(max_length=50, null=True)
     last_name = models.CharField(max_length=50)
     is_staff = models.BooleanField(default=False)
-    is_user = models.BooleanField(default=True)
+    is_public = models.BooleanField(default=True)
+    is_municipal = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
+    is_google = models.BooleanField(default=False)
     USERNAME_FIELD = 'email'
     
     objects = CustomUserManager()
